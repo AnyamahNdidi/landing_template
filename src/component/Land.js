@@ -10,7 +10,9 @@ import img from "./2.png"
 import img3 from "./4.png"
 import axios from "axios"
 import swal from 'sweetalert'
+import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from "react-router-dom";
+import Loading from "./Loading"
 
 
 const mySchema = yup.object().shape({
@@ -26,6 +28,9 @@ function Land() {
 
 
   const [myData, setmyData] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
+  const [load, setLoad] = React.useState(true)
+
 
   const getData = async ()=>{
     const res = await axios.get("https://templateapis.herokuapp.com/api/template")
@@ -33,6 +38,7 @@ function Land() {
     console.log(res.data?.data)
     console.log(res.data?.data[2])
     setmyData(res.data?.data)
+    setLoad(false)
   }
 
 
@@ -63,22 +69,26 @@ const{register, handleSubmit, reset ,formState:{ errors }} = useForm({
 
 const submit = handleSubmit(async (value)=>{
     console.log(value)
+    setLoading(true)
 
-     await axios.post(`https://templateapis.herokuapp.com/api/register`, value).then((data)=>{
-    console.log(data.data);
-    localStorage.setItem("userInfo", JSON.stringify(data.data))
+     await axios.post(`https://templatingapi-gideonekekeke.vercel.app/api/regUser`, value).then((response)=>{
+          if(response.status === 201){
+			  console.log('uploaded successfull')
+                           swal({
+            title: " Your Data has been Submitted!",
+            text: "You can clicked the button!",
+            icon: "success",
+            button: "ok",
+          })
+          .then((value) => {
+            swal(hist(window.location.reload()));
+          });  
+			  
+			  setLoading(false)
+		  }
+      })
 
-    swal({
-      title:"sucessfull",
-      text:"click to proceed",
-      icon:"success",
-      button:"ok"
-    }).then(()=>{
-      swal(hist(window.location.reload()));
-    })
-   
-    
- })
+      
   })
 
   React.useEffect(()=>{
@@ -95,11 +105,30 @@ const submit = handleSubmit(async (value)=>{
             </div>
             <div className="title">
               {/* Get 100% services from us! */}
-              {myData[1]?.title}
+
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%", height:"45px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"80%", height:"45px"}} />: null
+              }
+              <h1>{myData[1]?.title}</h1>
               </div>
             <div className="content">
               {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
 molestiae quas vel sint commodi repudiandae consequuntur  */}
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%", height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
                {myData[1]?.description}
             </div>
             <div className="iconDis">
@@ -140,9 +169,12 @@ molestiae quas vel sint commodi repudiandae consequuntur  */}
               </div>
 
             </div>
-            <div className="button1">
+            <a href="https://qubators.org/" target="_blank" style={{textDecoration:"none"}}>
+              <div className="button1">
                 Know More
             </div>
+            </a>
+            
           </div>
         <div className="con2">
           <div className='inputCon'>
@@ -178,11 +210,15 @@ molestiae quas vel sint commodi repudiandae consequuntur  */}
 
 
                   </form>
+                  <div className="textSub">By submitting the form you've agree to our terms and condition. </div>
                 </div>
           </div>
           <div
           className="dotCon"
           >
+            {
+						 loading ?  <Loading loading={loading}/> : null
+					 }
             <div className="imgdot">
               <img src={img3}/>
             </div>
