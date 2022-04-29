@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 import swal from 'sweetalert'
+import Loading from "./Loading"
 // import './mod.css'
 // import swal from 'sweetalert'
 // import { useNavigate } from "react-router-dom";
@@ -13,6 +14,8 @@ const EditModal = ({handleChange}) => {
   const [myData, setmyData] = React.useState('')
   const [title, setTitle] = React.useState()
   const [description, setDescription] = React.useState()
+   const [loading, setLoading] = React.useState(false)
+  const [load, setLoad] = React.useState(true)
 
   const getData = async ()=>{
     const res = await axios.get("https://templateapis.herokuapp.com/api/template")
@@ -25,17 +28,24 @@ const EditModal = ({handleChange}) => {
   
  
     const EditContent = async()=>{
+      setLoading(true)
       await axios.patch(`https://templateapis.herokuapp.com/api/template/${myData[1]?._id}`, {title, description}).then((response)=>{
-                swal({
-            title: " Successfull!",
+          if(response.status === 200){
+			  console.log('uploaded successfull')
+                           swal({
+            title: " Your Data has been Submitted!",
             text: "You can clicked the button!",
             icon: "success",
             button: "ok",
-        
-          }).then((value) => {
-            swal(hist(window.location.reload(handleChange())));
+          })
+          .then((value) => {
+            swal(hist(window.location.reload()));
           });  
+			  
+			  // setLoading(true)
+		  }
       })
+
     
     
 
@@ -70,12 +80,15 @@ const EditModal = ({handleChange}) => {
          <Holder>
              <Title>Description</Title>
              <Textarea 
-                maxLength='252'
+                maxLength='400'
+                style={{
+                  height:"150px"
+                }}
              type = "text"
              onChange = {(e)=>{
                  setDescription(e.target.value)
              }}
-             defaultValue = {myData[0]?.description}
+             defaultValue = {myData[1]?.description}
              />
          </Holder>
            {/* <Holder>
@@ -98,8 +111,15 @@ const EditModal = ({handleChange}) => {
          <div style = {{display : 'flex', width : '90%'}}>
 
              <button  onClick = {EditContent} style = {{marginLeft : '30px', height : '40px', width : '120px', cursor : 'pointer', background  : "#384359", color : 'white'}}> Save</button> 
-             <button onClick={handleChange}  style = {{marginLeft : '30px', height : '40px', width : '120px', cursor : 'pointer', background  : 'red', color : 'white'}}> Cancel</button> 
+             <button onClick={
+               ()=>{
+                 hist("/")
+               }
+               }  style = {{marginLeft : '30px', height : '40px', width : '120px', cursor : 'pointer', background  : 'green', color : 'white'}}> Preview</button> 
          </div>
+         {
+						 loading ?  <Loading loading={loading}/> : null
+					 }
         </div>
 		</div>
 	);

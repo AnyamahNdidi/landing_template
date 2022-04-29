@@ -12,7 +12,7 @@ import {Controller, useForm} from "react-hook-form"
 import axios from "axios"
 import swal from 'sweetalert'
 import { useNavigate } from "react-router-dom";
-
+import Skeleton from '@mui/material/Skeleton';
 
 const mySchema = yup.object().shape({
   fullname:yup.string().required("userName is required"),
@@ -24,10 +24,11 @@ const mySchema = yup.object().shape({
 function EditTemplate() {
    const hist = useNavigate()
   
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(true)
    const [myData, setmyData] = React.useState('')
+     const [load, setLoad] = React.useState(true)
   const handleChange = ()=>{
-    setShow(!show)
+    setShow(show)
   }
 
   const{register, handleSubmit, reset ,formState:{ errors }} = useForm({
@@ -60,6 +61,7 @@ function EditTemplate() {
     console.log(res.data?.data)
     console.log(res.data?.data[2])
     setmyData(res.data?.data)
+       setLoad(false)
   }
 
   const postData = async(value)=>{
@@ -95,11 +97,29 @@ function EditTemplate() {
             </div>
             <div className="title">
               {/* Gef 100% services from us! */}
-              {myData[1]?.title}
+                {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%", height:"45px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"80%", height:"45px"}} />: null
+              }
+              <h1>{myData[1]?.title}</h1>
               </div>
             <div className="content">
                 {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
 molestiae quas vel sint commodi repudiandae consequuntur  */}
+{
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%", height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
+              {
+                load ? <Skeleton variant="text" style={{backgroundColor:"silver", width:"100%",  height:"10px"}} />: null
+              }
              {myData[1]?.description}
             </div>
             <div className="iconDis">
@@ -180,6 +200,7 @@ molestiae quas vel sint commodi repudiandae consequuntur  */}
 
 
                   </form>
+                   <div className="textSub">By submitting the form you've agree to our terms and condition. </div>
                 </div>
           </div>
           <div
